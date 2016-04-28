@@ -4,7 +4,7 @@ import path from 'path'
 import rtlcss from 'rtlcss'
 import {ConcatSource} from 'webpack-sources'
 
-export default function WebpackRTLPlugin() {}
+const WebpackRTLPlugin = function() {}
 
 WebpackRTLPlugin.prototype.apply = function(compiler) {
   compiler.plugin('emit', (compilation, callback) => {
@@ -20,3 +20,5 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
     callback()
   })
 }
+
+module.exports = WebpackRTLPlugin

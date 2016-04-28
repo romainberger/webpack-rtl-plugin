@@ -28,22 +28,40 @@ const baseConfig = {
 describe('Webpack RTL Plugin', () => {
   it('should export a function', () => {
     expect(WebpackRTLPlugin).to.be.a('function')
+    expect(require('../')).to.be.a('function')
   })
 
-  it('should create a second bundle', (done) => {
-    webpack(baseConfig, (err, stats) => {
-      if (err) {
-        return done(err)
-      }
+  const bundlePath = path.join(__dirname, 'dist/bundle.js')
+  const cssBundlePath = path.join(__dirname, 'dist/style.css')
+  const rtlCssBundlePath = path.join(__dirname, 'dist/style.rtl.css')
 
-      if (stats.hasErrors()) {
-        return done(new Error(stats.toString()))
-      }
+  describe('Bundling', () => {
+    before(done => {
+      webpack(baseConfig, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
 
-      expect(fs.existsSync(path.join(__dirname, 'dist/bundle.js'))).to.be.true
-      expect(fs.existsSync(path.join(__dirname, 'dist/style.css'))).to.be.true
-      expect(fs.existsSync(path.join(__dirname, 'dist/style.rtl.css'))).to.be.true
-      done()
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        done()
+      })
+    })
+
+    it('should create a second bundle', () => {
+      expect(fs.existsSync(bundlePath)).to.be.true
+      expect(fs.existsSync(cssBundlePath)).to.be.true
+      expect(fs.existsSync(rtlCssBundlePath)).to.be.true
+    })
+
+    it('should contain the correct content', () => {
+      const contentCss = fs.readFileSync(cssBundlePath, 'utf-8')
+      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8')
+
+      expect(contentCss).to.contain('padding-left: 10px;')
+      expect(contentRrlCss).to.contain('padding-right: 10px;')
     })
   })
 })
