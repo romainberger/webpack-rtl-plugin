@@ -1,0 +1,38 @@
+{
+  "name": "webpack-rtl-plugin",
+  "version": "1.0.0",
+  "description": "Webpack plugin to produce a rtl css bundle",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rm -rf lib && babel src --out-dir lib",
+    "test": "rm -rf test/dist && mocha --compilers js:babel-register test/*.js",
+    "prepublish": "npm run build",
+    "flow": "flow"
+  },
+  "author": "Romain Berger <romain@romainberger.com>",
+  "keywords": [
+    "webpack",
+    "css",
+    "rtl"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.6.5",
+    "babel-plugin-transform-flow-strip-types": "^6.7.0",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.7.2",
+    "chai": "^3.5.0",
+    "css-loader": "^0.23.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "flow-bin": "^0.22.1",
+    "mocha": "^2.4.5",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.0"
+  },
+  "dependencies": {
+    "rtlcss": "^2.0.4",
+    "webpack-sources": "^0.1.2"
+  }
+}

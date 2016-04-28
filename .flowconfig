@@ -1,0 +1,11 @@
+[ignore]
+.*/node_modules/babel.*
+.*/node_modules/chai/.*
+.*/node_modules/mocha/.*
+.*/node_modules/flow-bin/.*
+
+[include]
+
+[libs]
+
+[options]

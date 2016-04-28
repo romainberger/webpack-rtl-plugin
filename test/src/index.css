@@ -1,0 +1,12 @@
+body {
+  direction: lrt;
+}
+
+.foo {
+  padding-left: 10px;
+}
+
+.bar {
+  position: absolute;
+  right: 100px;
+}
