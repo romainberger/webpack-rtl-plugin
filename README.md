@@ -1,4 +1,4 @@
-# Webpack RTL Plugin [![Build Status](https://img.shields.io/travis/dailymotion/webpack-rtl-plugin/master.svg?style=flat-square)](https://travis-ci.org/dailymotion/webpack-rtl-plugin)
+# Webpack RTL Plugin [![Build Status](https://img.shields.io/travis/romainberger/webpack-rtl-plugin/master.svg?style=flat-square)](https://travis-ci.org/romainberger/webpack-rtl-plugin)
 
 Webpack plugin to use in addition to [extract-text-webpack-plugin](https://github.com/webpack/extract-text-webpack-plugin) to create a second css bundle, processed to be rtl.
 

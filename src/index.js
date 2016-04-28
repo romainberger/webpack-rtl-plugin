@@ -1,5 +1,3 @@
-/* @flow */
-
 import path from 'path'
 import rtlcss from 'rtlcss'
 import {ConcatSource} from 'webpack-sources'
