@@ -4,8 +4,9 @@
   "description": "Webpack plugin to produce a rtl css bundle",
   "main": "lib/index.js",
   "scripts": {
+    "clean": "rm -rf test/dist*",
     "build": "rm -rf lib && babel src --out-dir lib",
-    "test": "rm -rf test/dist && npm run build && mocha --compilers js:babel-register test/*.js",
+    "test": "npm run clean && npm run build && mocha --compilers js:babel-register test/*.js",
     "prepublish": "npm run build"
   },
   "author": "Romain Berger <romain@romainberger.com>",

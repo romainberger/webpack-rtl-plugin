@@ -64,4 +64,66 @@ describe('Webpack RTL Plugin', () => {
       expect(contentRrlCss).to.contain('padding-right: 10px;')
     })
   })
+
+  describe('Filename options', () => {
+    let cssBundleName
+    let rtlCssBundleName
+    let cssBundlePath
+    let rtlCssBundlePath
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-hash'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin('style.[contenthash].css'),
+          new WebpackRTLPlugin({
+            filename: 'style.[contenthash].rtl.css',
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        Object.keys(stats.compilation.assets).forEach(asset => {
+          const chunk = asset.split('.')
+
+          if (path.extname(asset) === '.css') {
+            if (chunk[chunk.length - 2] === 'rtl') {
+              rtlCssBundleName = asset
+              rtlCssBundlePath = path.join(__dirname, 'dist-hash', asset)
+            }
+            else {
+              cssBundleName = asset
+              cssBundlePath = path.join(__dirname, 'dist-hash', asset)
+            }
+          }
+        })
+
+        done()
+      })
+    })
+
+    it('should create a two css bundles', () => {
+      expect(fs.existsSync(cssBundlePath)).to.be.true
+      expect(fs.existsSync(rtlCssBundlePath)).to.be.true
+    })
+
+    it('should create a second bundle with a different hash', () => {
+      const cssChunk = cssBundleName.split('.')
+      const rtlCssChunk = rtlCssBundleName.split('.')
+
+      expect(cssChunk[1]).to.not.equal(rtlCssChunk[1])
+    })
+  })
 })

@@ -39,3 +39,14 @@ module.exports = {
 ```
 
 This will create the normal `style.css` and an additionnal `style.rtl.css`.
+
+## Options
+
+```
+new WebpackRTLPlugin({
+  filename: 'style.[contenthash].rtl.css',
+})
+```
+
+* filename the filename of the result file. May contain [name], [id] and [contenthash]. Default to `style.css`.
+  * [contenthash] a hash of the content of the extracted file
