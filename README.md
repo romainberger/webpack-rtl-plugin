@@ -4,6 +4,8 @@ Webpack plugin to use in addition to [extract-text-webpack-plugin](https://githu
 
 This uses [rtlcss](https://github.com/MohammadYounes/rtlcss) under the hood, please refer to its documentation for supported properties.
 
+Check out the [webpack-rtl-example](https://github.com/romainberger/webpack-rtl-example) to see an example of an app using the rtl-css-loader and webpack-rtl-plugin.
+
 ## Installation
 
 ```shell
