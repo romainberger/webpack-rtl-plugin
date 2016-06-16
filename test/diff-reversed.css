@@ -1,0 +1,14 @@
+body {
+  background: red;
+  width: 200px;
+}
+
+.foo {
+  right: 10px;
+  border: 1px;
+}
+
+.bar {
+  color: black;
+  border-left: 20px;
+}

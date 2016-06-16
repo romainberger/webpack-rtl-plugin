@@ -174,4 +174,42 @@ describe('Webpack RTL Plugin', () => {
       expect(contentRrlCss).to.contain('.next {')
     })
   })
+
+  describe('Diff', () => {
+    const rtlCssBundlePath = path.join(__dirname, 'dist-diff/style.rtl.css')
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-diff'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin('style.css'),
+          new WebpackRTLPlugin({
+            diffOnly: true,
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        done()
+      })
+    })
+
+    it('should only contain the diff between the source and the rtl version', () => {
+      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8')
+      const expected = fs.readFileSync(path.join(__dirname, 'rtl-diff-result.css'), 'utf-8')
+      expect(contentRrlCss).to.equal(expected)
+    })
+  })
 })

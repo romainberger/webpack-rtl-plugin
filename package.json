@@ -38,6 +38,7 @@
     "webpack": "^1.13.0"
   },
   "dependencies": {
+    "postcss": "^5.0.21",
     "rtlcss": "^2.0.4",
     "webpack-sources": "^0.1.2"
   }
