@@ -3,7 +3,7 @@ import {createHash} from 'crypto'
 import rtlcss from 'rtlcss'
 import {ConcatSource} from 'webpack-sources'
 
-const WebpackRTLPlugin = function(options = {}) {
+const WebpackRTLPlugin = function(options = {filename: false, options: {}}) {
   this.options = options
 }
 
@@ -11,7 +11,7 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
   compiler.plugin('emit', (compilation, callback) => {
     Object.keys(compilation.assets).forEach(asset => {
       if (path.extname(asset) === '.css') {
-        const source = rtlcss.process(compilation.assets[asset].source())
+        const source = rtlcss.process(compilation.assets[asset].source(), this.options.options)
         let filename
 
         if (this.options.filename) {

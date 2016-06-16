@@ -126,4 +126,52 @@ describe('Webpack RTL Plugin', () => {
       expect(cssChunk[1]).to.not.equal(rtlCssChunk[1])
     })
   })
+
+  describe('Rtlcss options', () => {
+    const rtlCssBundlePath = path.join(__dirname, 'dist-options/style.rtl.css')
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-options'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin('style.css'),
+          new WebpackRTLPlugin({
+            options: {
+              autoRename: true,
+              stringMap: [
+                {
+                  search: 'prev',
+                  replace: 'next',
+                  options: {
+                    scope: '*',
+                  },
+                },
+              ],
+            },
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        done()
+      })
+    })
+
+    it('should follow the options given to rtlcss', () => {
+      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8')
+      expect(contentRrlCss).to.contain('.next {')
+    })
+  })
 })

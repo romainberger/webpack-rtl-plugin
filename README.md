@@ -47,8 +47,10 @@ This will create the normal `style.css` and an additionnal `style.rtl.css`.
 ```
 new WebpackRTLPlugin({
   filename: 'style.[contenthash].rtl.css',
+  options: {},
 })
 ```
 
 * `filename` the filename of the result file. May contain `[contenthash]`. Default to `style.css`.
   * `[contenthash]` a hash of the content of the extracted file
+* `options` Options given to `rtlcss`. See the [rtlcss documentation for available options](https://github.com/MohammadYounes/rtlcss#options-object).

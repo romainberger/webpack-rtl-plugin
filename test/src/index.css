@@ -10,3 +10,7 @@ body {
   position: absolute;
   right: 100px;
 }
+
+.prev {
+  width: 10px;
+}
