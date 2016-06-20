@@ -1,16 +1,6 @@
-body {
-  direction: lrt;
-}
-
 .foo {
   padding-right: 10px;
 }
-
 .bar {
-  position: absolute;
   left: 100px;
-}
-
-.prev {
-  width: 10px;
 }
