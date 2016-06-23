@@ -14,3 +14,7 @@ body {
 .prev {
   width: 10px;
 }
+
+.foo .bar {
+  height: 10px;
+}

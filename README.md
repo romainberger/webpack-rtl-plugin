@@ -49,6 +49,7 @@ new WebpackRTLPlugin({
   filename: 'style.[contenthash].rtl.css',
   options: {},
   diffOnly: false,
+  minify: true,
 })
 ```
 
@@ -56,3 +57,4 @@ new WebpackRTLPlugin({
   * `[contenthash]` a hash of the content of the extracted file
 * `options` Options given to `rtlcss`. See the [rtlcss documentation for available options](https://github.com/MohammadYounes/rtlcss#options-object).
 * `diffOnly` If set to `true`, the stylesheet created will only contain the css that differs from the source stylesheet. Default to `false`.
+* `minify` If set to `true`, will minify the css. You can also pass an object for the arguments passed to `cssnano`. Default to `false`. 

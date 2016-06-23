@@ -3,6 +3,8 @@ import {createHash} from 'crypto'
 import rtlcss from 'rtlcss'
 import {ConcatSource} from 'webpack-sources'
 import cssDiff from '@romainberger/css-diff'
+import {forEachOfLimit} from 'async'
+import cssnano from 'cssnano'
 
 const WebpackRTLPlugin = function(options = {filename: false, options: {}}) {
   this.options = options
@@ -10,17 +12,17 @@ const WebpackRTLPlugin = function(options = {filename: false, options: {}}) {
 
 WebpackRTLPlugin.prototype.apply = function(compiler) {
   compiler.plugin('emit', (compilation, callback) => {
-    Object.keys(compilation.assets).forEach(asset => {
+    forEachOfLimit(compilation.assets, 5, (source, asset, cb) => {
       if (path.extname(asset) === '.css') {
-        const baseSource = compilation.assets[asset].source()
-        let source = rtlcss.process(baseSource, this.options.options)
+        const baseSource = source.source()
+        let rtlSource = rtlcss.process(baseSource, this.options.options)
         let filename
 
         if (this.options.filename) {
           filename = this.options.filename
 
           if (/\[contenthash\]/.test(this.options.filename)) {
-            const hash = createHash('md5').update(source).digest('hex').substr(0, 10)
+            const hash = createHash('md5').update(rtlSource).digest('hex').substr(0, 10)
             filename = filename.replace('[contenthash]', hash)
           }
         }
@@ -29,14 +31,29 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
         }
 
         if (this.options.diffOnly) {
-          source = cssDiff(baseSource, source)
+          rtlSource = cssDiff(baseSource, rtlSource)
         }
 
-        compilation.assets[filename] = new ConcatSource(source)
-      }
-    })
+        if (this.options.minify) {
+          let nanoOptions = {}
+          if (typeof this.options.minify === 'object') {
+            nanoOptions = this.options.minify
+          }
 
-    callback()
+          cssnano.process(rtlSource, nanoOptions).then(output => {
+            compilation.assets[filename] = new ConcatSource(output.css)
+            cb()
+          })
+        }
+        else {
+          compilation.assets[filename] = new ConcatSource(rtlSource)
+          cb()
+        }
+      }
+      else {
+        cb()
+      }
+    }, callback)
   })
 }
 

@@ -212,4 +212,42 @@ describe('Webpack RTL Plugin', () => {
       expect(contentRrlCss).to.equal(expected)
     })
   })
+
+  describe('Minify', () => {
+    const rtlCssBundlePath = path.join(__dirname, 'dist-min/style.rtl.css')
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-min'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin('style.css'),
+          new WebpackRTLPlugin({
+            minify: true,
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        done()
+      })
+    })
+
+    it('should minify the css', () => {
+      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8')
+      const expected = '.foo{padding-right:10px}.bar{position:absolute;left:100px}.prev{width:10px}.foo .bar{height:10px}'
+      expect(contentRrlCss).to.contain(expected)
+    })
+  })
 })
