@@ -34,7 +34,7 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
           rtlSource = cssDiff(baseSource, rtlSource)
         }
 
-        if (this.options.minify) {
+        if (this.options.minify !== false) {
           let nanoOptions = {}
           if (typeof this.options.minify === 'object') {
             nanoOptions = this.options.minify

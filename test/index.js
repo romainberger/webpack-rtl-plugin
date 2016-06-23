@@ -21,7 +21,9 @@ const baseConfig = {
   },
   plugins: [
     new ExtractTextPlugin('style.css'),
-    new WebpackRTLPlugin(),
+    new WebpackRTLPlugin({
+      minify: false,
+    }),
   ],
 }
 
@@ -82,6 +84,7 @@ describe('Webpack RTL Plugin', () => {
           new ExtractTextPlugin('style.[contenthash].css'),
           new WebpackRTLPlugin({
             filename: 'style.[contenthash].rtl.css',
+            minify: false,
           }),
         ],
       }
@@ -152,6 +155,7 @@ describe('Webpack RTL Plugin', () => {
                 },
               ],
             },
+            minify: false,
           }),
         ],
       }
@@ -189,6 +193,7 @@ describe('Webpack RTL Plugin', () => {
           new ExtractTextPlugin('style.css'),
           new WebpackRTLPlugin({
             diffOnly: true,
+            minify: false,
           }),
         ],
       }
@@ -225,9 +230,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new ExtractTextPlugin('style.css'),
-          new WebpackRTLPlugin({
-            minify: true,
-          }),
+          new WebpackRTLPlugin(),
         ],
       }
 
