@@ -38,7 +38,7 @@
     "webpack": "^1.13.0"
   },
   "dependencies": {
-    "@romainberger/css-diff": "^1.0.0",
+    "@romainberger/css-diff": "^1.0.3",
     "postcss": "^5.0.21",
     "rtlcss": "^2.0.4",
     "webpack-sources": "^0.1.2"
