@@ -16,9 +16,9 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
       var rtlFiles = [],
           cssnanoPromise = Promise.resolve()
 
-      chunk.files.forEach(function(asset) {
+      chunk.files.forEach((asset) => {
         if (path.extname(asset) === '.css') {
-          const baseSource = source.source()
+          const baseSource = compilation.assets[asset].source()
           let rtlSource = rtlcss.process(baseSource, this.options.options)
           let filename
 
