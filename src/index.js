@@ -12,47 +12,56 @@ const WebpackRTLPlugin = function(options = {filename: false, options: {}}) {
 
 WebpackRTLPlugin.prototype.apply = function(compiler) {
   compiler.plugin('emit', (compilation, callback) => {
-    forEachOfLimit(compilation.assets, 5, (source, asset, cb) => {
-      if (path.extname(asset) === '.css') {
-        const baseSource = source.source()
-        let rtlSource = rtlcss.process(baseSource, this.options.options)
-        let filename
+    forEachOfLimit(compilation.chunks, 5, (chunk, key, cb) => {
+      var rtlFiles = [],
+          cssnanoPromise = Promise.resolve()
 
-        if (this.options.filename) {
-          filename = this.options.filename
+      chunk.files.forEach(function(asset) {
+        if (path.extname(asset) === '.css') {
+          const baseSource = source.source()
+          let rtlSource = rtlcss.process(baseSource, this.options.options)
+          let filename
 
-          if (/\[contenthash\]/.test(this.options.filename)) {
-            const hash = createHash('md5').update(rtlSource).digest('hex').substr(0, 10)
-            filename = filename.replace('[contenthash]', hash)
+          if (this.options.filename) {
+            filename = this.options.filename
+
+            if (/\[contenthash\]/.test(this.options.filename)) {
+              const hash = createHash('md5').update(rtlSource).digest('hex').substr(0, 10)
+              filename = filename.replace('[contenthash]', hash)
+            }
           }
-        }
-        else {
-          filename = `${path.basename(asset, '.css')}.rtl.css`
-        }
-
-        if (this.options.diffOnly) {
-          rtlSource = cssDiff(baseSource, rtlSource)
-        }
-
-        if (this.options.minify !== false) {
-          let nanoOptions = {}
-          if (typeof this.options.minify === 'object') {
-            nanoOptions = this.options.minify
+          else {
+            filename = `${path.basename(asset, '.css')}.rtl.css`
           }
 
-          cssnano.process(rtlSource, nanoOptions).then(output => {
-            compilation.assets[filename] = new ConcatSource(output.css)
-            cb()
-          })
+          if (this.options.diffOnly) {
+            rtlSource = cssDiff(baseSource, rtlSource)
+          }
+
+          if (this.options.minify !== false) {
+            let nanoOptions = {}
+            if (typeof this.options.minify === 'object') {
+              nanoOptions = this.options.minify
+            }
+
+            cssnanoPromise = cssnanoPromise.then(() => {
+              return cssnano.process(rtlSource, nanoOptions).then(output => {
+                compilation.assets[filename] = new ConcatSource(output.css)
+                rtlFiles.push(filename)
+              });
+            })
+          }
+          else {
+            compilation.assets[filename] = new ConcatSource(rtlSource)
+            rtlFiles.push(filename)
+          }
         }
-        else {
-          compilation.assets[filename] = new ConcatSource(rtlSource)
-          cb()
-        }
-      }
-      else {
+      })
+
+      cssnanoPromise.then(() => {
+        chunk.files.push.apply(chunk.files, rtlFiles)
         cb()
-      }
+      })
     }, callback)
   })
 }
