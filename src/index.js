@@ -45,10 +45,17 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
             }
 
             cssnanoPromise = cssnanoPromise.then(() => {
-              return cssnano.process(rtlSource, nanoOptions).then(output => {
+
+              const rtlMinify = cssnano.process(rtlSource, nanoOptions).then(output => {
                 compilation.assets[filename] = new ConcatSource(output.css)
                 rtlFiles.push(filename)
               });
+
+              const originalMinify = cssnano.process( baseSource, nanoOptions).then(output => {
+                compilation.assets[asset] = new ConcatSource(output.css)
+              });
+
+              return Promise.all([rtlMinify,originalMinify]);
             })
           }
           else {
