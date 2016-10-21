@@ -31,7 +31,8 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
             }
           }
           else {
-            filename = `${path.basename(asset, '.css')}.rtl.css`
+            const newFilename = `${path.basename(asset, '.css')}.rtl`
+            filename = asset.replace(path.basename(asset, '.css'), newFilename)
           }
 
           if (this.options.diffOnly) {
