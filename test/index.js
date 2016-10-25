@@ -130,6 +130,46 @@ describe('Webpack RTL Plugin', () => {
     })
   })
 
+  describe('Same path when no filename option', () => {
+    let cssBundlePath
+    let rtlCssBundlePath
+    let cssPath = 'assets/css'
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-path'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin(path.join(cssPath, 'style.css')),
+          new WebpackRTLPlugin(),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        cssBundlePath = path.join(__dirname, 'dist-path', cssPath, 'style.css')
+        rtlCssBundlePath = path.join(__dirname, 'dist-path', cssPath, 'style.rtl.css')
+
+        done()
+      })
+    })
+
+    it('should create two css bundles with same path', () => {
+      expect(fs.existsSync(cssBundlePath)).to.be.true
+      expect(fs.existsSync(rtlCssBundlePath)).to.be.true
+    })
+  })
+
   describe('Rtlcss options', () => {
     const rtlCssBundlePath = path.join(__dirname, 'dist-options/style.rtl.css')
 
