@@ -6,7 +6,7 @@ import cssDiff from '@romainberger/css-diff'
 import {forEachOfLimit} from 'async'
 import cssnano from 'cssnano'
 
-const WebpackRTLPlugin = function(options = {filename: false, options: {}}) {
+const WebpackRTLPlugin = function(options = {filename: false, options: {}, plugins: []}) {
   this.options = options
 }
 
@@ -19,7 +19,7 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
       chunk.files.forEach((asset) => {
         if (path.extname(asset) === '.css') {
           const baseSource = compilation.assets[asset].source()
-          let rtlSource = rtlcss.process(baseSource, this.options.options)
+          let rtlSource = rtlcss.process(baseSource, this.options.options, this.options.plugins)
           let filename
 
           if (this.options.filename) {
