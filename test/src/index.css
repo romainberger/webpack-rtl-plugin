@@ -1,4 +1,9 @@
+:root {
+  --brightest: #fff;
+}
+
 body {
+  background: var(--brightest);
   direction: lrt;
 }
 

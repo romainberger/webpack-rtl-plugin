@@ -219,6 +219,58 @@ describe('Webpack RTL Plugin', () => {
     })
   })
 
+  describe('Rtlcss plugins', () => {
+    const rtlCssBundlePath = path.join(__dirname, 'dist-options/style.rtl.css')
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-options'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin('style.css'),
+          new WebpackRTLPlugin({
+            plugins: [
+              // Based on github.com/MohammadYounes/rtlcss/issues/86#issuecomment-261875443
+              {
+                name: 'Skip variables',
+                priority: 1,
+                directives: { control: {}, value: [] },
+                processors: [
+                  {
+                    name: '--',
+                    expr: /^--/im,
+                    action: (prop, value) => ({ prop, value }),
+                  },
+                ],
+              },
+            ],
+            minify: false,
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        done()
+      })
+    })
+
+    it('should follow the plugins given to rtlcss', () => {
+      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8')
+      expect(contentRrlCss).to.contain('brightest')
+    })
+  })
+
   describe('Diff', () => {
     const rtlCssBundlePath = path.join(__dirname, 'dist-diff/style.rtl.css')
 
