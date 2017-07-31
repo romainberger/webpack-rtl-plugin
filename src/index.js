@@ -22,12 +22,30 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
           let rtlSource = rtlcss.process(baseSource, this.options.options, this.options.plugins)
           let filename
 
-          if (this.options.filename) {
+          if (this.options.filename instanceof Array && this.options.filename.length === 2) {
+            filename = asset.replace(this.options.filename[0], this.options.filename[1])
+          }
+          else if (this.options.filename) {
             filename = this.options.filename
 
-            if (/\[contenthash\]/.test(this.options.filename)) {
+            if (/\[contenthash]/.test(this.options.filename)) {
               const hash = createHash('md5').update(rtlSource).digest('hex').substr(0, 10)
               filename = filename.replace('[contenthash]', hash)
+            }
+            if (/\[id]/.test(this.options.filename)) {
+              filename = filename.replace('[id]', chunk.id)
+            }
+            if (/\[name]/.test(this.options.filename)) {
+              filename = filename.replace('[name]', chunk.name)
+            }
+            if (/\[file]/.test(this.options.filename)) {
+              filename = filename.replace('[file]', asset)
+            }
+            if (/\[filebase]/.test(this.options.filename)) {
+              filename = filename.replace('[filebase]', path.basename(asset))
+            }
+            if (/\[ext]/.test(this.options.filename)) {
+              filename = filename.replace('.[ext]', path.extname(asset))
             }
           }
           else {

@@ -46,14 +46,29 @@ WebpackRTLPlugin.prototype.apply = function (compiler) {
           var rtlSource = _rtlcss2.default.process(baseSource, _this.options.options, _this.options.plugins);
           var filename = void 0;
 
-          console.log('asset name:', asset, _this.options.filename);
-
-          if (_this.options.filename) {
+          if (_this.options.filename instanceof Array && _this.options.filename.length === 2) {
+            filename = asset.replace(_this.options.filename[0], _this.options.filename[1]);
+          } else if (_this.options.filename) {
             filename = _this.options.filename;
 
             if (/\[contenthash]/.test(_this.options.filename)) {
               var hash = (0, _crypto.createHash)('md5').update(rtlSource).digest('hex').substr(0, 10);
               filename = filename.replace('[contenthash]', hash);
+            }
+            if (/\[id]/.test(_this.options.filename)) {
+              filename = filename.replace('[id]', chunk.id);
+            }
+            if (/\[name]/.test(_this.options.filename)) {
+              filename = filename.replace('[name]', chunk.name);
+            }
+            if (/\[file]/.test(_this.options.filename)) {
+              filename = filename.replace('[file]', asset);
+            }
+            if (/\[filebase]/.test(_this.options.filename)) {
+              filename = filename.replace('[filebase]', _path2.default.basename(asset));
+            }
+            if (/\[ext]/.test(_this.options.filename)) {
+              filename = filename.replace('.[ext]', _path2.default.extname(asset));
             }
           } else {
             var newFilename = _path2.default.basename(asset, '.css') + '.rtl';
