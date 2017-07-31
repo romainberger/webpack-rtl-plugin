@@ -37,71 +37,75 @@ WebpackRTLPlugin.prototype.apply = function (compiler) {
 
   compiler.plugin('emit', function (compilation, callback) {
     (0, _async.forEachOfLimit)(compilation.chunks, 5, function (chunk, key, cb) {
-      var rtlFiles = [],
-          cssnanoPromise = Promise.resolve();
+      var rtlFiles = [];
+      var cssnanoPromise = Promise.resolve();
 
       chunk.files.forEach(function (asset) {
-        if (_path2.default.extname(asset) === '.css') {
-          var baseSource = compilation.assets[asset].source();
-          var rtlSource = _rtlcss2.default.process(baseSource, _this.options.options, _this.options.plugins);
-          var filename = void 0;
+        var match = _this.options.test ? new RegExp(_this.options.test).test(asset) : _path2.default.extname(asset) === '.css';
 
-          if (_this.options.filename instanceof Array && _this.options.filename.length === 2) {
-            filename = asset.replace(_this.options.filename[0], _this.options.filename[1]);
-          } else if (_this.options.filename) {
-            filename = _this.options.filename;
+        if (!match) {
+          return;
+        }
 
-            if (/\[contenthash]/.test(_this.options.filename)) {
-              var hash = (0, _crypto.createHash)('md5').update(rtlSource).digest('hex').substr(0, 10);
-              filename = filename.replace('[contenthash]', hash);
-            }
-            if (/\[id]/.test(_this.options.filename)) {
-              filename = filename.replace('[id]', chunk.id);
-            }
-            if (/\[name]/.test(_this.options.filename)) {
-              filename = filename.replace('[name]', chunk.name);
-            }
-            if (/\[file]/.test(_this.options.filename)) {
-              filename = filename.replace('[file]', asset);
-            }
-            if (/\[filebase]/.test(_this.options.filename)) {
-              filename = filename.replace('[filebase]', _path2.default.basename(asset));
-            }
-            if (/\[ext]/.test(_this.options.filename)) {
-              filename = filename.replace('.[ext]', _path2.default.extname(asset));
-            }
-          } else {
-            var newFilename = _path2.default.basename(asset, '.css') + '.rtl';
-            filename = asset.replace(_path2.default.basename(asset, '.css'), newFilename);
+        var baseSource = compilation.assets[asset].source();
+        var rtlSource = _rtlcss2.default.process(baseSource, _this.options.options, _this.options.plugins);
+        var filename = void 0;
+
+        if (_this.options.filename instanceof Array && _this.options.filename.length === 2) {
+          filename = asset.replace(_this.options.filename[0], _this.options.filename[1]);
+        } else if (_this.options.filename) {
+          filename = _this.options.filename;
+
+          if (/\[contenthash]/.test(_this.options.filename)) {
+            var hash = (0, _crypto.createHash)('md5').update(rtlSource).digest('hex').substr(0, 10);
+            filename = filename.replace('[contenthash]', hash);
+          }
+          if (/\[id]/.test(_this.options.filename)) {
+            filename = filename.replace('[id]', chunk.id);
+          }
+          if (/\[name]/.test(_this.options.filename)) {
+            filename = filename.replace('[name]', chunk.name);
+          }
+          if (/\[file]/.test(_this.options.filename)) {
+            filename = filename.replace('[file]', asset);
+          }
+          if (/\[filebase]/.test(_this.options.filename)) {
+            filename = filename.replace('[filebase]', _path2.default.basename(asset));
+          }
+          if (/\[ext]/.test(_this.options.filename)) {
+            filename = filename.replace('.[ext]', _path2.default.extname(asset));
+          }
+        } else {
+          var newFilename = _path2.default.basename(asset, '.css') + '.rtl';
+          filename = asset.replace(_path2.default.basename(asset, '.css'), newFilename);
+        }
+
+        if (_this.options.diffOnly) {
+          rtlSource = (0, _cssDiff2.default)(baseSource, rtlSource);
+        }
+
+        if (_this.options.minify !== false) {
+          var nanoOptions = {};
+          if (_typeof(_this.options.minify) === 'object') {
+            nanoOptions = _this.options.minify;
           }
 
-          if (_this.options.diffOnly) {
-            rtlSource = (0, _cssDiff2.default)(baseSource, rtlSource);
-          }
+          cssnanoPromise = cssnanoPromise.then(function () {
 
-          if (_this.options.minify !== false) {
-            var nanoOptions = {};
-            if (_typeof(_this.options.minify) === 'object') {
-              nanoOptions = _this.options.minify;
-            }
-
-            cssnanoPromise = cssnanoPromise.then(function () {
-
-              var rtlMinify = _cssnano2.default.process(rtlSource, nanoOptions).then(function (output) {
-                compilation.assets[filename] = new _webpackSources.ConcatSource(output.css);
-                rtlFiles.push(filename);
-              });
-
-              var originalMinify = _cssnano2.default.process(baseSource, nanoOptions).then(function (output) {
-                compilation.assets[asset] = new _webpackSources.ConcatSource(output.css);
-              });
-
-              return Promise.all([rtlMinify, originalMinify]);
+            var rtlMinify = _cssnano2.default.process(rtlSource, nanoOptions).then(function (output) {
+              compilation.assets[filename] = new _webpackSources.ConcatSource(output.css);
+              rtlFiles.push(filename);
             });
-          } else {
-            compilation.assets[filename] = new _webpackSources.ConcatSource(rtlSource);
-            rtlFiles.push(filename);
-          }
+
+            var originalMinify = _cssnano2.default.process(baseSource, nanoOptions).then(function (output) {
+              compilation.assets[asset] = new _webpackSources.ConcatSource(output.css);
+            });
+
+            return Promise.all([rtlMinify, originalMinify]);
+          });
+        } else {
+          compilation.assets[filename] = new _webpackSources.ConcatSource(rtlSource);
+          rtlFiles.push(filename);
         }
       });
 

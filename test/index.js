@@ -67,6 +67,55 @@ describe('Webpack RTL Plugin', () => {
     })
   })
 
+  describe('Test option', () => {
+    let bundlePath
+    let cssBundlePath
+    let rtlCssBundlePath
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        entry: {
+          'js/main.js': path.join(__dirname, 'src/index.js'),
+          'css/style.css': path.join(__dirname, 'src/index.js'),
+        },
+        output: {
+          path: path.resolve(__dirname, 'dist-test'),
+          filename: '[name]',
+        },
+        plugins: [
+          new ExtractTextPlugin('css/style.css'),
+          new WebpackRTLPlugin({
+            test: /css\//i,
+            minify: false,
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        bundlePath = path.join(__dirname, 'dist-test/js/main.js')
+        cssBundlePath = path.join(__dirname, 'dist-test/css/style.css')
+        rtlCssBundlePath = path.join(__dirname, 'dist-test/css/style.rtl.css')
+
+        done()
+      })
+    })
+
+    it('should create a two css bundles', () => {
+      expect(fs.existsSync(bundlePath)).to.be.true
+      expect(fs.existsSync(cssBundlePath)).to.be.true
+      expect(fs.existsSync(rtlCssBundlePath)).to.be.true
+    })
+  })
+
   describe('Filename options', () => {
     let cssBundleName
     let rtlCssBundleName

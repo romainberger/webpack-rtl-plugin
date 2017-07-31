@@ -54,6 +54,7 @@ new WebpackRTLPlugin({
 })
 ```
 
+* `test` a RegExp (object or string) that must match asset filename
 * `filename` the filename of the result file. May contain patterns in brackets. Default to `style.css`.
   * `[contenthash]` a hash of the content of the extracted file
   * `[id]` the module identifier
