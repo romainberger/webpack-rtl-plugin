@@ -304,8 +304,8 @@ describe('Webpack RTL Plugin', () => {
     })
 
     it('should only contain the diff between the source and the rtl version', () => {
-      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8')
-      const expected = fs.readFileSync(path.join(__dirname, 'rtl-diff-result.css'), 'utf-8')
+      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8').replace(/\r/g, '')
+      const expected = fs.readFileSync(path.join(__dirname, 'rtl-diff-result.css'), 'utf-8').replace(/\r/g, '')
       expect(contentRrlCss).to.equal(expected)
     })
   })
