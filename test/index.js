@@ -170,6 +170,45 @@ describe('Webpack RTL Plugin', () => {
     })
   })
 
+  describe('Suffix option', () => {
+    let rtlCssBundlePath
+    let cssPath = 'assets/css'
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-path'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin(path.join(cssPath, 'style.css')),
+          new WebpackRTLPlugin({
+            suffix: '-rtl'
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        rtlCssBundlePath = path.join(__dirname, 'dist-path', cssPath, 'style-rtl.css')
+
+        done()
+      })
+    })
+
+    it('should create rtl css bundle with -rtl suffix', () => {
+      expect(fs.existsSync(rtlCssBundlePath)).to.be.true
+    })
+  })
+
   describe('Rtlcss options', () => {
     const rtlCssBundlePath = path.join(__dirname, 'dist-options/style.rtl.css')
 
