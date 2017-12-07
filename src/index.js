@@ -6,7 +6,7 @@ import cssDiff from '@romainberger/css-diff'
 import {forEachOfLimit} from 'async'
 import cssnano from 'cssnano'
 
-const WebpackRTLPlugin = function(options = {filename: false, options: {}, plugins: []}) {
+const WebpackRTLPlugin = function(options = {filename: false, suffix: false, options: {}, plugins: []}) {
   this.options = options
 }
 
@@ -31,7 +31,9 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
             }
           }
           else {
-            const newFilename = `${path.basename(asset, '.css')}.rtl`
+          	const suffix = this.options.suffix || '.rtl'
+          	const newFilename = `${path.basename(asset, '.css')}${suffix}`
+
             filename = asset.replace(path.basename(asset, '.css'), newFilename)
           }
 
