@@ -11,7 +11,7 @@ const WebpackRTLPlugin = function(options = {filename: false, options: {}, plugi
 }
 
 WebpackRTLPlugin.prototype.apply = function(compiler) {
-  compiler.plugin('emit', (compilation, callback) => {
+  compiler.hooks.emit.tapAsync('WebpackRTLPlugin', (compilation, callback) => {
     forEachOfLimit(compilation.chunks, 5, (chunk, key, cb) => {
       var rtlFiles = [],
           cssnanoPromise = Promise.resolve()
