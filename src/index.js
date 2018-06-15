@@ -13,7 +13,7 @@ const WebpackRTLPlugin = function(options = {filename: false, options: {}, plugi
 }
 
 WebpackRTLPlugin.prototype.apply = function(compiler) {
-  if (this.options.options.updateRuntimeChunk) {
+  if (this.options.updateRuntimeChunk) {
     const rtlFlag = this.options.rtlFlag || 'IS_RTL';
     compiler.hooks.thisCompilation.tap(this.pliginName, compilation => {
       compilation.mainTemplate.hooks.requireEnsure.tap(this.pliginName, (source, chunk, hash) => {

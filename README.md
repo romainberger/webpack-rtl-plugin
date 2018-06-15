@@ -47,6 +47,8 @@ This will create the normal `style.css` and an additionnal `style.rtl.css`.
 ```
 new WebpackRTLPlugin({
   filename: 'style.[contenthash].rtl.css',
+  updateRuntimeChunk: true,
+  rtlFlag: 'IS_RTL',
   options: {},
   plugins: [],
   diffOnly: false,
@@ -56,6 +58,8 @@ new WebpackRTLPlugin({
 
 * `filename` the filename of the result file. May contain `[contenthash]`. Default to `style.css`.
   * `[contenthash]` a hash of the content of the extracted file
+* `updateRuntimeChunk` updates webpack runtime to look for `.rtl.css` async chunks instead of `.css`. Works along with `mini-css-extract-plugin`.
+* `rtlFlag`. If `updateRuntimeChunk` is set to `true` will look for global var (IS_RTL by default) passed as a string value.
 * `options` Options given to `rtlcss`. See the [rtlcss documentation for available options](http://rtlcss.com/learn/usage-guide/options/).
 * `plugins` RTLCSS plugins given to `rtlcss`. See the [rtlcss documentation for writing plugins](http://rtlcss.com/learn/extending-rtlcss/writing-a-plugin/). Default to `[]`.
 * `diffOnly` If set to `true`, the stylesheet created will only contain the css that differs from the source stylesheet. Default to `false`.
