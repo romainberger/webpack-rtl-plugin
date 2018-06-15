@@ -8,11 +8,34 @@ import cssnano from 'cssnano'
 
 const WebpackRTLPlugin = function(options = {filename: false, options: {}, plugins: []}) {
   this.options = options
+  this.chunkHashs = {};
+  this.pliginName = 'webpack-rtl-plugin';
 }
 
 WebpackRTLPlugin.prototype.apply = function(compiler) {
-  compiler.plugin('emit', (compilation, callback) => {
-    forEachOfLimit(compilation.chunks, 5, (chunk, key, cb) => {
+  if (this.options.updateRuntimeChunk) {
+    const rtlFlag = this.options.rtlFlag || 'IS_RTL';
+    compiler.hooks.thisCompilation.tap(this.pliginName, compilation => {
+      compilation.mainTemplate.hooks.requireEnsure.tap(this.pliginName, (source, chunk, hash) => {
+        // already updated
+        if (source.indexOf('.rtl.css') !== -1){
+          return source;
+        }
+        return source.replace(/(var href.*)("\.css";)/i, '$1 (' + rtlFlag + ' ? ".rtl.css" : ".css");');
+      });
+    });
+  }
+
+  compiler.hooks.emit.tap(this.pliginName, (compilation) => {
+    const changedChunks = compilation.chunks.filter((chunk) => {
+      const name = chunk.name || chunk.id;
+      const prevHash = this.chunkHashs[name];
+      const currHash = chunk.hash;
+      this.chunkHashs[name] = currHash;
+      return !prevHash || (currHash !== prevHash);
+    });
+
+    forEachOfLimit(changedChunks, 5, (chunk, key, cb) => {
       var rtlFiles = [],
           cssnanoPromise = Promise.resolve()
 
@@ -70,7 +93,7 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
         chunk.files.push.apply(chunk.files, rtlFiles)
         cb()
       })
-    }, callback)
+    })
   })
 }
 
