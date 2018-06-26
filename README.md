@@ -54,8 +54,16 @@ new WebpackRTLPlugin({
 })
 ```
 
-* `filename` the filename of the result file. May contain `[contenthash]`. Default to `style.css`.
+* `test` a RegExp (object or string) that must match asset filename
+* `filename` the filename of the result file. May contain patterns in brackets. Default to `style.css`.
   * `[contenthash]` a hash of the content of the extracted file
+  * `[id]` the module identifier
+  * `[name]` the module name
+  * `[file]` the extracted file filename 
+  * `[filebase]` the extracted file basename
+  * `[ext]` the extracted file extension
+  * May be an array of replace function arguments like `[/(\.css)/i, '-rtl$1']`.
+    Replace applies to filename that specified in extract-text-webpack-plugin.
 * `options` Options given to `rtlcss`. See the [rtlcss documentation for available options](http://rtlcss.com/learn/usage-guide/options/).
 * `plugins` RTLCSS plugins given to `rtlcss`. See the [rtlcss documentation for writing plugins](http://rtlcss.com/learn/extending-rtlcss/writing-a-plugin/). Default to `[]`.
 * `diffOnly` If set to `true`, the stylesheet created will only contain the css that differs from the source stylesheet. Default to `false`.

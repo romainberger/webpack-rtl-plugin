@@ -67,6 +67,55 @@ describe('Webpack RTL Plugin', () => {
     })
   })
 
+  describe('Test option', () => {
+    let bundlePath
+    let cssBundlePath
+    let rtlCssBundlePath
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        entry: {
+          'js/main.js': path.join(__dirname, 'src/index.js'),
+          'css/style.css': path.join(__dirname, 'src/index.js'),
+        },
+        output: {
+          path: path.resolve(__dirname, 'dist-test'),
+          filename: '[name]',
+        },
+        plugins: [
+          new ExtractTextPlugin('css/style.css'),
+          new WebpackRTLPlugin({
+            test: /css\//i,
+            minify: false,
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        bundlePath = path.join(__dirname, 'dist-test/js/main.js')
+        cssBundlePath = path.join(__dirname, 'dist-test/css/style.css')
+        rtlCssBundlePath = path.join(__dirname, 'dist-test/css/style.rtl.css')
+
+        done()
+      })
+    })
+
+    it('should create a two css bundles', () => {
+      expect(fs.existsSync(bundlePath)).to.be.true
+      expect(fs.existsSync(cssBundlePath)).to.be.true
+      expect(fs.existsSync(rtlCssBundlePath)).to.be.true
+    })
+  })
+
   describe('Filename options', () => {
     let cssBundleName
     let rtlCssBundleName
@@ -127,6 +176,123 @@ describe('Webpack RTL Plugin', () => {
       const rtlCssChunk = rtlCssBundleName.split('.')
 
       expect(cssChunk[1]).to.not.equal(rtlCssChunk[1])
+    })
+  })
+
+  describe('Filename options with patterns', () => {
+    let cssBundleName
+    let rtlCssBundleName
+    let cssBundlePath
+    let rtlCssBundlePath
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-patterns'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin('style.[contenthash].css'),
+          new WebpackRTLPlugin({
+            filename: '[id]-[file]-[contenthash]-[name]-[filebase].rtl.[ext]',
+            minify: false,
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        Object.keys(stats.compilation.assets).forEach(asset => {
+          const chunk = asset.split('.')
+
+          if (path.extname(asset) === '.css') {
+            if (chunk[chunk.length - 2] === 'rtl') {
+              rtlCssBundleName = asset
+              rtlCssBundlePath = path.join(__dirname, 'dist-patterns', asset)
+            }
+            else {
+              cssBundleName = asset
+              cssBundlePath = path.join(__dirname, 'dist-patterns', asset)
+            }
+          }
+        })
+
+        done()
+      })
+    })
+
+    it('should create a two css bundles', () => {
+      expect(fs.existsSync(cssBundlePath)).to.be.true
+      expect(fs.existsSync(rtlCssBundlePath)).to.be.true
+    })
+
+    it('should create a second bundle with a different hash', () => {
+      const cssChunk = cssBundleName.split('.')[1]
+      const rtlCssChunk = rtlCssBundleName.split('-')[2]
+
+      expect(cssChunk).to.not.equal(rtlCssChunk)
+    })
+  })
+
+  describe('Filename options with replace array', () => {
+    let cssBundleName
+    let rtlCssBundleName
+    let cssBundlePath
+    let rtlCssBundlePath
+
+    before(done => {
+      const config = {
+        ...baseConfig,
+        output: {
+          path: path.resolve(__dirname, 'dist-replace'),
+          filename: 'bundle.js',
+        },
+        plugins: [
+          new ExtractTextPlugin('style.[contenthash].css'),
+          new WebpackRTLPlugin({
+            filename: [/(\.css)/, '-rtl$1'],
+            minify: false,
+          }),
+        ],
+      }
+
+      webpack(config, (err, stats) => {
+        if (err) {
+          return done(err)
+        }
+
+        if (stats.hasErrors()) {
+          return done(new Error(stats.toString()))
+        }
+
+        Object.keys(stats.compilation.assets).forEach(asset => {
+          if (path.extname(asset) === '.css') {
+            if (asset.substr(-7, 3) === 'rtl') {
+              rtlCssBundleName = asset
+              rtlCssBundlePath = path.join(__dirname, 'dist-replace', asset)
+            }
+            else {
+              cssBundleName = asset
+              cssBundlePath = path.join(__dirname, 'dist-replace', asset)
+            }
+          }
+        })
+
+        done()
+      })
+    })
+
+    it('should create a two css bundles', () => {
+      expect(fs.existsSync(cssBundlePath)).to.be.true
+      expect(fs.existsSync(rtlCssBundlePath)).to.be.true
     })
   })
 
@@ -304,8 +470,8 @@ describe('Webpack RTL Plugin', () => {
     })
 
     it('should only contain the diff between the source and the rtl version', () => {
-      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8')
-      const expected = fs.readFileSync(path.join(__dirname, 'rtl-diff-result.css'), 'utf-8')
+      const contentRrlCss = fs.readFileSync(rtlCssBundlePath, 'utf-8').replace(/\r/g, '')
+      const expected = fs.readFileSync(path.join(__dirname, 'rtl-diff-result.css'), 'utf-8').replace(/\r/g, '')
       expect(contentRrlCss).to.equal(expected)
     })
   })
