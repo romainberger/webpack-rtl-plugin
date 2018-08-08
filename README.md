@@ -47,6 +47,8 @@ This will create the normal `style.css` and an additionnal `style.rtl.css`.
 ```
 new WebpackRTLPlugin({
   filename: 'style.[contenthash].rtl.css',
+  updateRuntimeChunk: true,
+  rtlFlag: 'IS_RTL',
   options: {},
   plugins: [],
   diffOnly: false,
@@ -57,6 +59,8 @@ new WebpackRTLPlugin({
 * `test` a RegExp (object or string) that must match asset filename
 * `filename` the filename of the result file. May contain patterns in brackets. Default to `style.css`.
   * `[contenthash]` a hash of the content of the extracted file
+  * `updateRuntimeChunk` updates webpack runtime to look for `.rtl.css` async chunks instead of `.css`. Works along with `mini-css-extract-plugin`. Works, when optimization.runtimeChunk is set to 'single'
+  * `rtlFlag`. If `updateRuntimeChunk` is set to `true` will look for global var (IS_RTL by default) passed as a string value.
   * `[id]` the module identifier
   * `[name]` the module name
   * `[file]` the extracted file filename 
