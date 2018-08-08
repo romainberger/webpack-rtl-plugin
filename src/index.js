@@ -11,7 +11,7 @@ const WebpackRTLPlugin = function(options = {filename: false, options: {}, plugi
 }
 
 WebpackRTLPlugin.prototype.apply = function(compiler) {
-  compiler.plugin('emit', (compilation, callback) => {
+  compiler.hooks.emit.tap(this.pliginName, (compilation) => {
     forEachOfLimit(compilation.chunks, 5, (chunk, key, cb) => {
       const rtlFiles = []
       let cssnanoPromise = Promise.resolve()
@@ -99,7 +99,7 @@ WebpackRTLPlugin.prototype.apply = function(compiler) {
         chunk.files.push.apply(chunk.files, rtlFiles)
         cb()
       })
-    }, callback)
+    })
   })
 }
 
