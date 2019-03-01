@@ -30,12 +30,25 @@ var WebpackRTLPlugin = function WebpackRTLPlugin() {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { filename: false, options: {}, plugins: [] };
 
   this.options = options;
+  this.pliginName = 'webpack-rtl-plugin';
 };
 
 WebpackRTLPlugin.prototype.apply = function (compiler) {
   var _this = this;
 
-  compiler.plugin('emit', function (compilation, callback) {
+  if (this.options.updateRuntimeChunk) {
+    var rtlFlag = this.options.rtlFlag || 'IS_RTL';
+    compiler.hooks.thisCompilation.tap(this.pliginName, function (compilation) {
+      compilation.mainTemplate.hooks.requireEnsure.tap(_this.pliginName, function (source, chunk, hash) {
+        // already updated
+        if (source.indexOf('.rtl.css') !== -1) {
+          return source;
+        }
+        return source.replace(/(var href.*)("\.css";)/i, '$1 (' + rtlFlag + ' ? ".rtl.css" : ".css");');
+      });
+    });
+  }
+  compiler.hooks.emit.tap(this.pliginName, function (compilation) {
     (0, _async.forEachOfLimit)(compilation.chunks, 5, function (chunk, key, cb) {
       var rtlFiles = [];
       var cssnanoPromise = Promise.resolve();
@@ -120,7 +133,7 @@ WebpackRTLPlugin.prototype.apply = function (compiler) {
         chunk.files.push.apply(chunk.files, rtlFiles);
         cb();
       });
-    }, callback);
+    });
   });
 };
 
