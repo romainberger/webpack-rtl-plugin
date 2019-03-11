@@ -1,6 +1,6 @@
 {
   "name": "webpack-rtl-plugin",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "Webpack plugin to produce a rtl css bundle",
   "main": "dist/index.js",
   "scripts": {
