@@ -1,6 +1,6 @@
 # Webpack RTL Plugin [![Build Status](https://img.shields.io/travis/romainberger/webpack-rtl-plugin/master.svg?style=flat-square)](https://travis-ci.org/romainberger/webpack-rtl-plugin) [![npm version](https://img.shields.io/npm/v/webpack-rtl-plugin.svg?style=flat-square)](https://www.npmjs.com/package/webpack-rtl-plugin) [![npm downloads](https://img.shields.io/npm/dm/webpack-rtl-plugin.svg?style=flat-square)](https://www.npmjs.com/package/webpack-rtl-plugin)
 
-Webpack plugin to use in addition to [extract-text-webpack-plugin](https://github.com/webpack/extract-text-webpack-plugin) to create a second css bundle, processed to be rtl.
+Webpack plugin to use in addition to [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin) to create a second css bundle, processed to be rtl.
 
 This uses [rtlcss](https://github.com/MohammadYounes/rtlcss) under the hood, please refer to its documentation for supported properties.
 
@@ -17,7 +17,7 @@ $ npm install webpack-rtl-plugin
 Add the plugin to your webpack configuration:
 
 ```js
-import WebpackRTLPlugin from 'webpack-rtl-plugin'
+const WebpackRTLPlugin = require('webpack-rtl-plugin')
 
 module.exports = {
   entry: path.join(__dirname, 'src/index.js'),
@@ -26,15 +26,25 @@ module.exports = {
     filename: 'bundle.js',
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              ...,
+            }
+          }
+        ]
       }
     ],
   },
   plugins: [
-    new ExtractTextPlugin('style.css'),
+    new MiniCssExtractPlugin({
+        filename: 'style.css',
+    }),
     new WebpackRTLPlugin(),
   ],
 }

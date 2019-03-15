@@ -1,26 +1,40 @@
-import fs from 'fs'
-import path from 'path'
-import {expect} from 'chai'
-import webpack from 'webpack'
-import WebpackRTLPlugin from '../src'
-import ExtractTextPlugin from 'extract-text-webpack-plugin'
+const fs = require('fs')
+const path = require('path')
+const { expect } = require('chai')
+const webpack = require('webpack')
+const WebpackRTLPlugin = require('../src')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const baseConfig = {
+  mode: "development",
   entry: path.join(__dirname, 'src/index.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+                modules: true,
+                url: false,
+                importLoaders: 1,
+                localIdentName: "[local]",
+            },
+          }
+        ],
       }
     ],
   },
   plugins: [
-    new ExtractTextPlugin('style.css'),
+    new MiniCssExtractPlugin({
+        filename: 'style.css',
+    }),
     new WebpackRTLPlugin({
       minify: false,
     }),
@@ -77,14 +91,15 @@ describe('Webpack RTL Plugin', () => {
         ...baseConfig,
         entry: {
           'js/main.js': path.join(__dirname, 'src/index.js'),
-          'css/style.css': path.join(__dirname, 'src/index.js'),
         },
         output: {
           path: path.resolve(__dirname, 'dist-test'),
           filename: '[name]',
         },
         plugins: [
-          new ExtractTextPlugin('css/style.css'),
+          new MiniCssExtractPlugin({
+              filename: 'css/style.css',
+          }),
           new WebpackRTLPlugin({
             test: /css\//i,
             minify: false,
@@ -130,7 +145,9 @@ describe('Webpack RTL Plugin', () => {
           filename: 'bundle.js',
         },
         plugins: [
-          new ExtractTextPlugin('style.[contenthash].css'),
+          new MiniCssExtractPlugin({
+              filename: 'style.[contenthash].css',
+          }),
           new WebpackRTLPlugin({
             filename: 'style.[contenthash].rtl.css',
             minify: false,
@@ -193,7 +210,9 @@ describe('Webpack RTL Plugin', () => {
           filename: 'bundle.js',
         },
         plugins: [
-          new ExtractTextPlugin('style.[contenthash].css'),
+          new MiniCssExtractPlugin({
+              filename: 'style.[contenthash].css',
+          }),
           new WebpackRTLPlugin({
             filename: '[id]-[file]-[contenthash]-[name]-[filebase].rtl.[ext]',
             minify: false,
@@ -256,7 +275,9 @@ describe('Webpack RTL Plugin', () => {
           filename: 'bundle.js',
         },
         plugins: [
-          new ExtractTextPlugin('style.[contenthash].css'),
+          new MiniCssExtractPlugin({
+              filename: 'style.[contenthash].css',
+          }),
           new WebpackRTLPlugin({
             filename: [/(\.css)/, '-rtl$1'],
             minify: false,
@@ -309,7 +330,9 @@ describe('Webpack RTL Plugin', () => {
           filename: 'bundle.js',
         },
         plugins: [
-          new ExtractTextPlugin(path.join(cssPath, 'style.css')),
+          new MiniCssExtractPlugin({
+              filename: path.join(cssPath, 'style.css'),
+          }),
           new WebpackRTLPlugin(),
         ],
       }
@@ -347,7 +370,9 @@ describe('Webpack RTL Plugin', () => {
           filename: 'bundle.js',
         },
         plugins: [
-          new ExtractTextPlugin('style.css'),
+          new MiniCssExtractPlugin({
+              filename: 'style.css',
+          }),
           new WebpackRTLPlugin({
             options: {
               autoRename: true,
@@ -396,7 +421,9 @@ describe('Webpack RTL Plugin', () => {
           filename: 'bundle.js',
         },
         plugins: [
-          new ExtractTextPlugin('style.css'),
+          new MiniCssExtractPlugin({
+              filename: 'style.css',
+          }),
           new WebpackRTLPlugin({
             plugins: [
               // Based on github.com/MohammadYounes/rtlcss/issues/86#issuecomment-261875443
@@ -448,7 +475,9 @@ describe('Webpack RTL Plugin', () => {
           filename: 'bundle.js',
         },
         plugins: [
-          new ExtractTextPlugin('style.css'),
+          new MiniCssExtractPlugin({
+              filename: 'style.css',
+          }),
           new WebpackRTLPlugin({
             diffOnly: true,
             minify: false,
@@ -487,7 +516,9 @@ describe('Webpack RTL Plugin', () => {
           filename: 'bundle.js',
         },
         plugins: [
-          new ExtractTextPlugin('style.css'),
+          new MiniCssExtractPlugin({
+              filename: 'style.css',
+          }),
           new WebpackRTLPlugin(),
         ],
       }
