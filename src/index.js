@@ -10,12 +10,11 @@ const pluginName = "WebpackRTLPlugin"
 
 class WebpackRTLPlugin {
   constructor(options) {
-    this.options = {
+    this.options = Object.assign({
       filename: false,
       options: {},
       plugins: [],
-      ...options
-    }
+    }, options);
   }
 
   apply(compiler) {

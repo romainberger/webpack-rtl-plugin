@@ -88,7 +88,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         entry: {
           'js/main.js': path.join(__dirname, 'src/index.js'),
         },
@@ -107,7 +106,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
@@ -139,7 +138,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         output: {
           path: path.resolve(__dirname, 'dist-hash'),
           filename: 'bundle.js',
@@ -155,7 +153,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
@@ -204,7 +202,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         output: {
           path: path.resolve(__dirname, 'dist-patterns'),
           filename: 'bundle.js',
@@ -220,7 +217,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
@@ -269,7 +266,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         output: {
           path: path.resolve(__dirname, 'dist-replace'),
           filename: 'bundle.js',
@@ -285,7 +281,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
@@ -324,7 +320,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         output: {
           path: path.resolve(__dirname, 'dist-path'),
           filename: 'bundle.js',
@@ -337,7 +332,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
@@ -364,7 +359,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         output: {
           path: path.resolve(__dirname, 'dist-options'),
           filename: 'bundle.js',
@@ -391,7 +385,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
@@ -415,7 +409,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         output: {
           path: path.resolve(__dirname, 'dist-options'),
           filename: 'bundle.js',
@@ -445,7 +438,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
@@ -469,7 +462,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         output: {
           path: path.resolve(__dirname, 'dist-diff'),
           filename: 'bundle.js',
@@ -485,7 +477,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
@@ -510,7 +502,6 @@ describe('Webpack RTL Plugin', () => {
 
     before(done => {
       const config = {
-        ...baseConfig,
         output: {
           path: path.resolve(__dirname, 'dist-min'),
           filename: 'bundle.js',
@@ -523,7 +514,7 @@ describe('Webpack RTL Plugin', () => {
         ],
       }
 
-      webpack(config, (err, stats) => {
+      webpack(Object.assign(baseConfig, config), (err, stats) => {
         if (err) {
           return done(err)
         }
