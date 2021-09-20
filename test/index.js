@@ -21,10 +21,11 @@ const baseConfig = {
           {
             loader: "css-loader",
             options: {
-                modules: true,
-                url: false,
-                importLoaders: 1,
-                localIdentName: "[local]",
+              modules: {
+                localIdentName: "[local]"
+              },
+              url: false,
+              importLoaders: 1
             },
           }
         ],
@@ -33,7 +34,7 @@ const baseConfig = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-        filename: 'style.css',
+      filename: 'style.css',
     }),
     new WebpackRTLPlugin({
       minify: false,
@@ -98,7 +99,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: 'css/style.css',
+            filename: 'css/style.css',
           }),
           new WebpackRTLPlugin({
             test: /css\//i,
@@ -146,7 +147,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: 'style.[contenthash].css',
+            filename: 'style.[contenthash].css',
           }),
           new WebpackRTLPlugin({
             filename: 'style.[contenthash].rtl.css',
@@ -211,7 +212,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: 'style.[contenthash].css',
+            filename: 'style.[contenthash].css',
           }),
           new WebpackRTLPlugin({
             filename: '[id]-[file]-[contenthash]-[name]-[filebase].rtl.[ext]',
@@ -276,7 +277,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: 'style.[contenthash].css',
+            filename: 'style.[contenthash].css',
           }),
           new WebpackRTLPlugin({
             filename: [/(\.css)/, '-rtl$1'],
@@ -331,7 +332,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: path.join(cssPath, 'style.css'),
+            filename: path.join(cssPath, 'style.css'),
           }),
           new WebpackRTLPlugin(),
         ],
@@ -371,7 +372,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: 'style.css',
+            filename: 'style.css',
           }),
           new WebpackRTLPlugin({
             options: {
@@ -422,7 +423,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: 'style.css',
+            filename: 'style.css',
           }),
           new WebpackRTLPlugin({
             plugins: [
@@ -476,7 +477,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: 'style.css',
+            filename: 'style.css',
           }),
           new WebpackRTLPlugin({
             diffOnly: true,
@@ -517,7 +518,7 @@ describe('Webpack RTL Plugin', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-              filename: 'style.css',
+            filename: 'style.css',
           }),
           new WebpackRTLPlugin(),
         ],
