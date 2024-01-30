@@ -103,8 +103,12 @@ class WebpackRTLPlugin {
           }
         })
 
-        cssnanoPromise.then(() => {
-          chunk.files.push.apply(chunk.files, rtlFiles)
+       cssnanoPromise.then(() => {
+          if (chunk.files instanceof Set) {
+            rtlFiles.forEach( item => chunk.files.add( item ) );
+          } else {
+            chunk.files.push.apply(chunk.files, rtlFiles)
+          }
           cb()
         })
       }, callback)
